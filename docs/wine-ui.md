@@ -30,11 +30,12 @@ these colors too. Without that setting, native Windows appearance is unchanged.
 
 ```sh
 python3 contrib/wine/install.py --exe /path/to/tested/rufus.exe --dpi 192
-rufus-zig-dev --theme mocha
-rufus-zig-dev --theme latte
+zufus --theme mocha
+zufus --theme latte
 ```
 
-The installer creates two application-menu entries. Close Rufus before switching;
+The installer creates the **Zufus** and **Zufus · 浅色** application-menu entries.
+The `zufus` command launches it; `rufus-zig-dev` remains a compatibility alias. Close Rufus before switching;
 the launcher holds a lock while it runs and will not terminate another instance.
 It preserves an existing executable as `rufus-before-ui.exe`. Theme changes retain
 Rufus's device and application settings. The first launch or a theme change takes
