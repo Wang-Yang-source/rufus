@@ -3,6 +3,7 @@
 """Check the exported C ABI against Python's independent hashlib backend."""
 import ctypes
 import hashlib
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -15,8 +16,10 @@ ZIG = os.environ.get('ZIG', 'zig')
 
 def main():
     version = subprocess.check_output([ZIG, 'version'], text=True).strip()
-    if version != '0.16.0':
-        raise SystemExit(f'Expected Zig 0.16.0, got {version}')
+    pins = json.loads((ROOT / 'docs/zig-toolchain.json').read_text())
+    versions = {pins['version'], pins['development']['version']}
+    if version not in versions:
+        raise SystemExit(f'Expected a pinned Zig version {sorted(versions)}, got {version}')
     with tempfile.TemporaryDirectory(prefix='rufus-zig-hash-') as directory:
         suffix = '.dll' if sys.platform == 'win32' else '.dylib' if sys.platform == 'darwin' else '.so'
         library = Path(directory) / ('rufushash' + suffix)

@@ -766,7 +766,7 @@ rufus$(EXEEXT): $(zig_hash_libs_$(ZIG_HASH))
 
 .PHONY: zig-hash-toolchain
 zig-hash-toolchain:
-	@test "$$($(ZIG) version)" = "0.16.0" || { echo "Zig 0.16.0 is required"; exit 1; }
+	@case "$$($(ZIG) version)" in 0.16.0|0.17.0-dev.2294+71403f299) ;; *) echo "Use a Zig version pinned in docs/zig-toolchain.json"; exit 1 ;; esac
 	@test -n "$(ZIG_TARGET)" -a -n "$(findstring mingw,$(ZIG_CC_TARGET))" || { echo "Unsupported Zig hash compiler target: $(ZIG_CC_TARGET)"; exit 1; }
 
 zig/librufushash.a: $(srcdir)/zig/hash.zig zig-hash-toolchain

@@ -22,9 +22,12 @@ Include `zig-LICENSE.txt` with distributions using this backend.
 
 ## Toolchain
 
-Exactly **Zig 0.16.0** is required. Do not use the locally installed 0.17 development
-compiler. Official archives and SHA-256 hashes are pinned in `zig-toolchain.json`,
-obtained from https://ziglang.org/download/index.json. Verify the downloaded
+Supported toolchains are **Zig 0.16.0** and the exact development build
+**0.17.0-dev.2294+71403f299**, matching the locally installed compiler.
+Other development snapshots require a new compatibility check and hash pin.
+Official archives and SHA-256 hashes are pinned in `zig-toolchain.json`,
+using the release index at https://ziglang.org/download/index.json and
+versioned development downloads at https://ziglang.org/builds/. Verify the downloaded
 archive's SHA-256 before extraction. No third-party Zig packages are introduced.
 
 ## Building

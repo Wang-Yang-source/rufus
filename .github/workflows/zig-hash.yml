@@ -9,6 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
+        toolchain: [stable, development]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -17,7 +18,9 @@ jobs:
         run: |
           import hashlib, json, os, pathlib, platform, tarfile, urllib.request, zipfile
           key = 'x86_64-windows' if platform.system() == 'Windows' else 'x86_64-linux'
-          pin = json.loads(pathlib.Path('docs/zig-toolchain.json').read_text())['archives'][key]
+          manifest = json.loads(pathlib.Path('docs/zig-toolchain.json').read_text())
+          profile = manifest['development'] if '${{ matrix.toolchain }}' == 'development' else manifest
+          pin = profile['archives'][key]
           dest = pathlib.Path(os.environ['RUNNER_TEMP']) / 'rufus-zig'
           dest.mkdir()
           archive = dest / ('zig.zip' if key.endswith('windows') else 'zig.tar.xz')
