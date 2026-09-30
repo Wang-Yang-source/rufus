@@ -23,6 +23,8 @@
 #include <uxtheme.h>
 
 extern BOOL is_darkmode_enabled;
+extern BOOL use_system_colors;
+extern COLORREF system_progress_colors[3];
 
 typedef enum _WindowsBuild {
 	WIN10_1809 = 17763, // first build to support dark mode

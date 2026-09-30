@@ -2935,7 +2935,7 @@ static INT_PTR CALLBACK MainCallback(HWND hDlg, UINT message, WPARAM wParam, LPA
 			return FALSE;
 		SetBkMode((HDC)wParam, TRANSPARENT);
 		SelectObject((HDC)wParam, hHyperlinkFont);
-		SetTextColor((HDC)wParam, TOOLBAR_ICON_COLOR);
+		SetTextColor((HDC)wParam, use_system_colors ? GetSysColor(COLOR_HOTLIGHT) : TOOLBAR_ICON_COLOR);
 		return (INT_PTR)GetSysColorBrush(COLOR_BTNFACE);
 
 	case WM_DESTROY:

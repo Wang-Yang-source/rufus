@@ -41,6 +41,8 @@ PF_TYPE_DECL(WINAPI, VOID, FlushMenuThemes, (VOID));
 PF_TYPE_DECL(WINAPI, BOOL, SetWindowCompositionAttribute, (HWND, WINDOWCOMPOSITIONATTRIBDATA*));
 
 BOOL is_darkmode_enabled = FALSE;
+BOOL use_system_colors = FALSE;
+COLORREF system_progress_colors[3];
 
 static COLORREF color_accent = TOOLBAR_ICON_COLOR;
 
@@ -80,6 +82,21 @@ static inline BOOL IsHighContrast(void)
 BOOL GetDarkModeFromRegistry(void)
 {
 	DWORD data = 0, size = sizeof(data);
+
+	// Wine and classic/high-contrast themes supply colors through GetSysColor.
+	use_system_colors = ReadSettingBool(SETTING_SYSTEM_COLORS);
+	if (use_system_colors) {
+		system_progress_colors[0] = ReadSetting32(SETTING_PROGRESS_NORMAL);
+		system_progress_colors[1] = ReadSetting32(SETTING_PROGRESS_PAUSED);
+		system_progress_colors[2] = ReadSetting32(SETTING_PROGRESS_ERROR);
+		if (system_progress_colors[0] == 0)
+			system_progress_colors[0] = GetSysColor(COLOR_HIGHLIGHT);
+		if (system_progress_colors[1] == 0)
+			system_progress_colors[1] = PROGRESS_BAR_PAUSED_COLOR;
+		if (system_progress_colors[2] == 0)
+			system_progress_colors[2] = PROGRESS_BAR_ERROR_COLOR;
+		return FALSE;
+	}
 
 	if (!IsAtLeastWin10() || IsHighContrast())
 		return FALSE;
@@ -198,11 +215,11 @@ BOOL ChangeIconColor(HICON* hIcon, COLORREF new_color)
 	HICON hIconNew = NULL;
 	RGBQUAD* pixels = NULL;
 
-	if (!*hIcon || !is_darkmode_enabled)
+	if (!*hIcon || (!is_darkmode_enabled && !use_system_colors))
 		return FALSE;
 
 	if (new_color == 0)
-		new_color = color_accent;
+		new_color = use_system_colors ? GetSysColor(COLOR_HOTLIGHT) : color_accent;
 
 	hdcBitmap = CreateCompatibleDC(NULL);
 	hdcScreen = GetDC(NULL);

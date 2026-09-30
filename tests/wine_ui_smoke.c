@@ -1,0 +1,179 @@
+/* UI-only smoke test. Run only in an isolated Wine prefix; no disks are written. */
+#include <windows.h>
+#include <commctrl.h>
+#include <stdlib.h>
+#include "../src/resource.h"
+#include <stdio.h>
+#include <string.h>
+static DWORD child_pid;
+static HWND main_dialog;
+static void capture(HWND window, const char *name)
+{
+    RECT r;
+    GetWindowRect(window, &r);
+    int w = r.right - r.left, h = r.bottom - r.top;
+    HDC screen = GetDC(NULL), dc = CreateCompatibleDC(screen);
+    BITMAPINFO bi = {0};
+    bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bi.bmiHeader.biWidth = w;
+    bi.bmiHeader.biHeight = -h;
+    bi.bmiHeader.biPlanes = 1;
+    bi.bmiHeader.biBitCount = 32;
+    bi.bmiHeader.biCompression = BI_RGB;
+    void *bits;
+    HBITMAP bitmap = CreateDIBSection(screen, &bi, DIB_RGB_COLORS, &bits, NULL, 0);
+    HGDIOBJ old = SelectObject(dc, bitmap);
+    BitBlt(dc, 0, 0, w, h, screen, r.left, r.top, SRCCOPY);
+    BITMAPFILEHEADER file = {0};
+    file.bfType = 0x4d42;
+    file.bfOffBits = sizeof(file) + sizeof(bi.bmiHeader);
+    file.bfSize = file.bfOffBits + w * h * 4;
+    FILE *out = fopen(name, "wb");
+    if (out) {
+        fwrite(&file, sizeof(file), 1, out);
+        fwrite(&bi.bmiHeader, sizeof(bi.bmiHeader), 1, out);
+        fwrite(bits, w * h * 4, 1, out);
+        fclose(out);
+    }
+    printf("Capture %s: %dx%d, DPI %d, caption %d, background #%02x%02x%02x\n", name, w, h,
+           GetDeviceCaps(screen, LOGPIXELSX), GetSystemMetrics(SM_CYCAPTION),
+           GetRValue(GetSysColor(COLOR_BTNFACE)), GetGValue(GetSysColor(COLOR_BTNFACE)),
+           GetBValue(GetSysColor(COLOR_BTNFACE)));
+    SelectObject(dc, old);
+    DeleteObject(bitmap);
+    DeleteDC(dc);
+    ReleaseDC(NULL, screen);
+}
+static BOOL CALLBACK inspect(HWND window, LPARAM unused)
+{
+    (void)unused;
+    DWORD pid;
+    char title[256];
+    GetWindowThreadProcessId(window, &pid);
+    if (pid != child_pid || !IsWindowVisible(window))
+        return TRUE;
+    GetWindowTextA(window, title, sizeof(title));
+    if (strcmp(title, "TEST VERSION") == 0) {
+        printf("Dismissed test version notice\n");
+        PostMessageA(window, WM_COMMAND, IDOK, 0);
+    } else if (GetDlgItem(window, IDYES) != NULL && GetDlgItem(window, IDNO) != NULL) {
+        Sleep(500);
+        capture(window, "warning.bmp");
+        printf("Accepted locally built test executable in isolated prefix\n");
+        PostMessageA(window, WM_COMMAND, IDYES, 0);
+    } else if (strstr(title, "update policy")) {
+        printf("Declined update check in isolated test\n");
+        PostMessageA(window, WM_COMMAND, IDNO, 0);
+    } else if (strncmp(title, "Rufus 4.", 8) == 0) {
+        main_dialog = window;
+    }
+    return TRUE;
+}
+int main(int argc, char **argv)
+{
+    if (getenv("RUFUS_UI_TEST") == NULL || strcmp(getenv("RUFUS_UI_TEST"), "1") != 0) {
+        fprintf(stderr, "Set RUFUS_UI_TEST=1 in an isolated test prefix.\n");
+        return 2;
+    }
+    SetProcessDPIAware();
+    STARTUPINFOA startup = {0};
+    startup.cb = sizeof(startup);
+    PROCESS_INFORMATION process;
+    char command[1024], title[256];
+    if (argc != 3)
+        return 2;
+    HKEY settings;
+    if (RegCreateKeyExA(HKEY_CURRENT_USER, "Software\\Akeo Consulting\\Rufus", 0, NULL, 0,
+                        KEY_SET_VALUE, NULL, &settings, NULL) != ERROR_SUCCESS)
+        return 2;
+    RegSetValueExA(settings, "Locale", 0, REG_SZ, (const BYTE *)"zh-CN", 6);
+    DWORD interval = (DWORD)-1;
+    RegSetValueExA(settings, "UpdateCheckInterval", 0, REG_DWORD, (const BYTE *)&interval,
+                   sizeof(interval));
+    RegCloseKey(settings);
+    snprintf(command, sizeof(command), "\"%s\" -g -l zh-CN", argv[1]);
+    if (!CreateProcessA(NULL, command, NULL, NULL, FALSE, 0, NULL, NULL, &startup, &process)) {
+        printf("CreateProcess failed: %lu\n", GetLastError());
+        return 3;
+    }
+    child_pid = process.dwProcessId;
+    for (int i = 0; i < 100; i++) {
+        EnumWindows(inspect, 0);
+        if (main_dialog && IsWindowEnabled(main_dialog))
+            break;
+        if (WaitForSingleObject(process.hProcess, 200) == WAIT_OBJECT_0)
+            break;
+    }
+    if (!main_dialog || !IsWindowEnabled(main_dialog)) {
+        printf("Main dialog did not become ready\n");
+        TerminateProcess(process.hProcess, 4);
+        return 4;
+    }
+    GetWindowTextA(main_dialog, title, sizeof(title));
+    printf("Ready main dialog: %s\n", title);
+    SetForegroundWindow(main_dialog);
+    Sleep(1000);
+    capture(main_dialog, "main.bmp");
+    HDC display = GetDC(NULL);
+    int dpi = GetDeviceCaps(display, LOGPIXELSX);
+    ReleaseDC(NULL, display);
+    RECT main_rect;
+    GetWindowRect(main_dialog, &main_rect);
+    if (dpi != atoi(argv[2]) ||
+        GetSystemMetrics(SM_CYCAPTION) > (main_rect.bottom - main_rect.top) / 8) {
+        fprintf(stderr, "DPI/caption proportions failed\n");
+        TerminateProcess(process.hProcess, 6);
+        return 6;
+    }
+    HWND progress = GetDlgItem(main_dialog, IDC_PROGRESS);
+    SendMessageA(progress, PBM_SETRANGE, 0, MAKELPARAM(0, 100));
+    SendMessageA(progress, PBM_SETPOS, 0, 0);
+    UpdateWindow(progress);
+    HDC dc = GetDC(progress);
+    COLORREF pixel = GetPixel(dc, 5, 5);
+    ReleaseDC(progress, dc);
+    if (pixel != GetSysColor(COLOR_WINDOW)) {
+        fprintf(stderr, "Progress background is not the theme background: %06lx\n", pixel);
+        TerminateProcess(process.hProcess, 7);
+        return 7;
+    }
+    const char *keys[] = {"ProgressColorNormal", "ProgressColorPaused", "ProgressColorError"};
+    for (int state = PBST_NORMAL; state <= PBST_ERROR; state++) {
+        DWORD expected = 0, size = sizeof(expected);
+        if (RegGetValueA(HKEY_CURRENT_USER, "Software\\Akeo Consulting\\Rufus", keys[state - 1],
+                         RRF_RT_REG_DWORD, NULL, &expected, &size) != ERROR_SUCCESS)
+            return 8;
+        SendMessageA(progress, PBM_SETSTATE, state, 0);
+        SendMessageA(progress, PBM_SETPOS, 50, 0);
+        UpdateWindow(progress);
+        Sleep(100);
+        dc = GetDC(progress);
+        pixel = GetPixel(dc, 5, 5);
+        ReleaseDC(progress, dc);
+        if (pixel != expected) {
+            fprintf(stderr, "Progress state %d color mismatch: %06lx != %06lx\n", state, pixel,
+                    expected);
+            TerminateProcess(process.hProcess, 8);
+            return 8;
+        }
+    }
+    SendMessageA(progress, PBM_SETSTATE, PBST_NORMAL, 0);
+    SendMessageA(progress, PBM_SETPOS, 0, 0);
+    UpdateWindow(progress);
+    printf("PASS: Chinese startup/main UI, DPI, themed progress background and 3 states\n");
+    keybd_event(VK_CONTROL, 0, 0, 0);
+    keybd_event('T', 0, 0, 0);
+    Sleep(100);
+    keybd_event('T', 0, KEYEVENTF_KEYUP, 0);
+    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
+    Sleep(2500);
+    PostMessageA(main_dialog, WM_CLOSE, 0, 0);
+    if (WaitForSingleObject(process.hProcess, 5000) != WAIT_OBJECT_0) {
+        TerminateProcess(process.hProcess, 5);
+        return 5;
+    }
+    DWORD code;
+    GetExitCodeProcess(process.hProcess, &code);
+    printf("Rufus exit code: %lu\n", code);
+    return code != 0;
+}

@@ -904,21 +904,15 @@ static INT_PTR CALLBACK ProgressCallback(HWND hCtrl, UINT message, WPARAM wParam
 	COLORREF background_color, text_color, inverted_text_color, border_color;
 	static BOOL marquee_mode = FALSE;
 	static uint32_t pos = 0, min = 0, max = 0xFFFF;
-	static COLORREF color = PROGRESS_BAR_NORMAL_COLOR;
+	static int progress_state = PBST_NORMAL;
+	COLORREF color;
 
 	switch (message) {
 
 	case PBM_SETSTATE:
-		switch (wParam) {
-		case PBST_NORMAL:
-			color = PROGRESS_BAR_NORMAL_COLOR;
-			break;
-		case PBST_PAUSED:
-			color = PROGRESS_BAR_PAUSED_COLOR;
-			break;
-		case PBST_ERROR:
-			color = PROGRESS_BAR_ERROR_COLOR;
-			break;
+		if (wParam >= PBST_NORMAL && wParam <= PBST_ERROR) {
+			progress_state = (int)wParam;
+			InvalidateRect(hCtrl, NULL, FALSE);
 		}
 		return (INT_PTR)TRUE;
 
@@ -941,7 +935,7 @@ static INT_PTR CALLBACK ProgressCallback(HWND hCtrl, UINT message, WPARAM wParam
 		if ((wParam == TRUE) && (!marquee_mode)) {
 			marquee_mode = TRUE;
 			pos = min;
-			color = PROGRESS_BAR_NORMAL_COLOR;
+			progress_state = PBST_NORMAL;
 			SetTimer(hCtrl, TID_MARQUEE_TIMER, MARQUEE_TIMER_REFRESH, NULL);
 			InvalidateRect(hProgress, NULL, TRUE);
 		} else if ((wParam == FALSE) && (marquee_mode)) {
@@ -964,10 +958,20 @@ static INT_PTR CALLBACK ProgressCallback(HWND hCtrl, UINT message, WPARAM wParam
 
 	case WM_PAINT:
 		hDC = BeginPaint(hCtrl, &ps);
-		background_color = is_darkmode_enabled ? DARKMODE_NORMAL_CONTROL_BACKGROUND_COLOR : PROGRESS_BAR_BACKGROUND_COLOR;
-		text_color = is_darkmode_enabled ? PROGRESS_BAR_INVERTED_TEXT_COLOR : PROGRESS_BAR_NORMAL_TEXT_COLOR;
-		inverted_text_color = is_darkmode_enabled ? PROGRESS_BAR_NORMAL_TEXT_COLOR : PROGRESS_BAR_INVERTED_TEXT_COLOR;
-		border_color = is_darkmode_enabled ? DARKMODE_NORMAL_CONTROL_EDGE_COLOR : PROGRESS_BAR_BOX_COLOR;
+		if (use_system_colors) {
+			color = system_progress_colors[progress_state - PBST_NORMAL];
+			background_color = GetSysColor(COLOR_WINDOW);
+			text_color = GetSysColor(COLOR_WINDOWTEXT);
+			inverted_text_color = GetSysColor(COLOR_HIGHLIGHTTEXT);
+			border_color = GetSysColor(COLOR_BTNSHADOW);
+		} else {
+			color = (progress_state == PBST_PAUSED) ? PROGRESS_BAR_PAUSED_COLOR :
+				((progress_state == PBST_ERROR) ? PROGRESS_BAR_ERROR_COLOR : PROGRESS_BAR_NORMAL_COLOR);
+			background_color = is_darkmode_enabled ? DARKMODE_NORMAL_CONTROL_BACKGROUND_COLOR : PROGRESS_BAR_BACKGROUND_COLOR;
+			text_color = is_darkmode_enabled ? PROGRESS_BAR_INVERTED_TEXT_COLOR : PROGRESS_BAR_NORMAL_TEXT_COLOR;
+			inverted_text_color = is_darkmode_enabled ? PROGRESS_BAR_NORMAL_TEXT_COLOR : PROGRESS_BAR_INVERTED_TEXT_COLOR;
+			border_color = is_darkmode_enabled ? DARKMODE_NORMAL_CONTROL_EDGE_COLOR : PROGRESS_BAR_BOX_COLOR;
+		}
 		GetClientRect(hCtrl, &rc);
 		rc2 = rc;
 		InflateRect(&rc, -1, -1);
