@@ -296,6 +296,7 @@
     <ClCompile Include="..\src\cregex_compile.c" />
     <ClCompile Include="..\src\cregex_parse.c" />
     <ClCompile Include="..\src\cregex_vm.c" />
+    <ClCompile Include="..\src\projectgraph_ui.c" />
     <ClCompile Include="..\src\darkmode.c" />
     <ClCompile Include="..\src\dos_locale.c" />
     <ClCompile Include="..\src\drive.c" />
@@ -330,6 +331,7 @@
     <ClInclude Include="..\src\badblocks.h" />
     <ClInclude Include="..\src\bled\bled.h" />
     <ClInclude Include="..\src\cregex.h" />
+    <ClInclude Include="..\src\projectgraph_ui.h" />
     <ClInclude Include="..\src\darkmode.h" />
     <ClInclude Include="..\src\drive.h" />
     <ClInclude Include="..\src\efi.h" />

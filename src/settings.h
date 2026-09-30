@@ -33,6 +33,7 @@ extern char* ini_file;
 #define SETTING_ADVANCED_MODE_FORMAT        "ShowAdvancedFormatOptions"
 #define SETTING_COMM_CHECK                  "CommCheck64"
 #define SETTING_DEFAULT_THREAD_PRIORITY     "DefaultThreadPriority"
+#define SETTING_PROJECTGRAPH_UI             "ProjectGraphUI"
 #define SETTING_SYSTEM_COLORS               "SystemColors"
 #define SETTING_PROGRESS_NORMAL             "ProgressColorNormal"
 #define SETTING_PROGRESS_PAUSED             "ProgressColorPaused"

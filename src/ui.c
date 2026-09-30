@@ -41,6 +41,8 @@
 #include "localization.h"
 
 #include "ui.h"
+#include "settings.h"
+#include "projectgraph_ui.h"
 #include "ui_data.h"
 
 UINT_PTR UM_LANGUAGE_MENU_MAX = UM_LANGUAGE_MENU;
@@ -1037,6 +1039,7 @@ static INT_PTR CALLBACK ProgressCallback(HWND hCtrl, UINT message, WPARAM wParam
 			SelectObject(hDC, hOldFont);
 		SelectObject(hDC, hOldPen);
 		SelectObject(hDC, hOldBrush);
+		PaintProjectGraphFrame(hCtrl, hDC);
 		EndPaint(hCtrl, &ps);
 		return (INT_PTR)TRUE;
 	}
@@ -1613,6 +1616,8 @@ void SetBootTypeDropdownWidth(void)
 // Create the horizontal section lines
 void OnPaint(HDC hdc)
 {
+	if (use_system_colors && ReadSettingBool(SETTING_PROJECTGRAPH_UI))
+		return;
 	int i;
 	COLORREF cp = is_darkmode_enabled ? DARKMODE_NORMAL_CONTROL_EDGE_COLOR : GetSysColor(COLOR_WINDOWTEXT);
 	HPEN hp = CreatePen(0, (fScale < 1.5f) ? 2 : 3, cp);

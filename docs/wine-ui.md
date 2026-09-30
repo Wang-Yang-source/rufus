@@ -2,7 +2,7 @@
 
 The Linux development launcher uses a dedicated Wine prefix. Wine's default
 96 DPI client area can be much smaller than the desktop's scaled title bar.
-Use Wine's own decorations and one DPI for the whole window:
+Use the optional ProjectGraph frame and one DPI for the whole window:
 
 ```sh
 python3 contrib/wine/configure.py \
@@ -63,7 +63,9 @@ Requires MinGW-w64, Wine, Xvfb and the Chinese font. The helper accepts the
 unofficial-build warning only inside the explicitly enabled disposable test
 session. It changes no drive contents. It captures both Chinese windows, checks
 DPI/caption proportions, idle progress background and all three progress states,
-and runs Rufus's Ctrl-T hash check before closing the app.
+checks the rounded progress corner, custom caption hit targets, minimize/restore,
+keyboard focus and native dropdown behavior, and runs Rufus's Ctrl-T hash check
+before closing the app.
 
 ```sh
 python3 tests/test_wine_ui.py --exe /path/to/rufus.exe \
@@ -71,5 +73,5 @@ python3 tests/test_wine_ui.py --exe /path/to/rufus.exe \
 ```
 
 The default matrix covers Mocha and Latte at 96, 144 and 192 DPI. Each case writes
-`warning.bmp`, `main.bmp` and `result.log` for visual inspection. Do not point this
+`warning.bmp`, `main.bmp`, `focus.bmp`, `dropdown.bmp` and `result.log` for visual inspection. Do not point this
 test at an installed or shared prefix: it sets test-only locale/update settings.

@@ -125,12 +125,81 @@ int main(int argc, char **argv)
         TerminateProcess(process.hProcess, 6);
         return 6;
     }
+    POINT caption_point = {main_rect.right - MulDiv(24, dpi, 96),
+                           main_rect.top + MulDiv(22, dpi, 96)};
+    if (SendMessageA(main_dialog, WM_NCHITTEST, 0,
+                     MAKELPARAM(caption_point.x, caption_point.y)) != HTCLOSE ||
+        (GetWindowLongPtrA(main_dialog, GWL_STYLE) & WS_CAPTION)) {
+        fprintf(stderr, "Custom caption hit test/style failed\n");
+        TerminateProcess(process.hProcess, 9);
+        return 9;
+    }
+    caption_point.x -= MulDiv(36, dpi, 96);
+    if (SendMessageA(main_dialog, WM_NCHITTEST, 0,
+                     MAKELPARAM(caption_point.x, caption_point.y)) != HTMINBUTTON) {
+        fprintf(stderr, "Custom minimize hit test failed\n");
+        TerminateProcess(process.hProcess, 9);
+        return 9;
+    }
+    SendMessageA(main_dialog, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+    Sleep(200);
+    if (!IsIconic(main_dialog)) {
+        TerminateProcess(process.hProcess, 9);
+        return 9;
+    }
+    SendMessageA(main_dialog, WM_SYSCOMMAND, SC_RESTORE, 0);
+    SetForegroundWindow(main_dialog);
+    keybd_event(VK_TAB, 0, 0, 0);
+    keybd_event(VK_TAB, 0, KEYEVENTF_KEYUP, 0);
+    Sleep(200);
+    GUITHREADINFO focus = {0};
+    focus.cbSize = sizeof(focus);
+    if (!GetGUIThreadInfo(GetWindowThreadProcessId(main_dialog, NULL), &focus) ||
+        focus.hwndFocus == NULL || !IsChild(main_dialog, focus.hwndFocus)) {
+        fprintf(stderr, "Keyboard navigation failed\n");
+        TerminateProcess(process.hProcess, 9);
+        return 9;
+    }
+    capture(main_dialog, "focus.bmp");
+    HWND boot = GetDlgItem(main_dialog, IDC_BOOT_SELECTION);
+    SendMessageA(boot, CB_SHOWDROPDOWN, TRUE, 0);
+    Sleep(200);
+    if (!SendMessageA(boot, CB_GETDROPPEDSTATE, 0, 0)) {
+        fprintf(stderr, "Native dropdown failed\n");
+        TerminateProcess(process.hProcess, 9);
+        return 9;
+    }
+    capture(main_dialog, "dropdown.bmp");
+    SendMessageA(boot, CB_SHOWDROPDOWN, FALSE, 0);
+    printf("PASS: custom caption, minimize/restore, keyboard focus, native dropdown\n");
     HWND progress = GetDlgItem(main_dialog, IDC_PROGRESS);
+    char progress_class[64];
+    GetClassNameA(progress, progress_class, sizeof(progress_class));
+    printf("Progress class %s, style %08llx, extended style %08llx\n", progress_class,
+           (unsigned long long)GetWindowLongPtrA(progress, GWL_STYLE),
+           (unsigned long long)GetWindowLongPtrA(progress, GWL_EXSTYLE));
+    if ((GetWindowLongPtrA(progress, GWL_STYLE) & WS_BORDER) ||
+        (GetWindowLongPtrA(progress, GWL_EXSTYLE) & (WS_EX_CLIENTEDGE | WS_EX_STATICEDGE))) {
+        fprintf(stderr, "Progress retains native square non-client border\n");
+        TerminateProcess(process.hProcess, 7);
+        return 7;
+    }
+
     SendMessageA(progress, PBM_SETRANGE, 0, MAKELPARAM(0, 100));
     SendMessageA(progress, PBM_SETPOS, 0, 0);
     UpdateWindow(progress);
+    RECT progress_rect;
+    GetClientRect(progress, &progress_rect);
+    int probe_x = MulDiv(12, dpi, 96), probe_y = progress_rect.bottom / 2;
     HDC dc = GetDC(progress);
-    COLORREF pixel = GetPixel(dc, 5, 5);
+    COLORREF corner = GetPixel(dc, 0, 0);
+    if (corner != GetSysColor(COLOR_BTNFACE)) {
+        fprintf(stderr, "Rounded progress corner retains a native border: %06lx\n", corner);
+        ReleaseDC(progress, dc);
+        TerminateProcess(process.hProcess, 7);
+        return 7;
+    }
+    COLORREF pixel = GetPixel(dc, probe_x, probe_y);
     ReleaseDC(progress, dc);
     if (pixel != GetSysColor(COLOR_WINDOW)) {
         fprintf(stderr, "Progress background is not the theme background: %06lx\n", pixel);
@@ -148,7 +217,7 @@ int main(int argc, char **argv)
         UpdateWindow(progress);
         Sleep(100);
         dc = GetDC(progress);
-        pixel = GetPixel(dc, 5, 5);
+        pixel = GetPixel(dc, probe_x, probe_y);
         ReleaseDC(progress, dc);
         if (pixel != expected) {
             fprintf(stderr, "Progress state %d color mismatch: %06lx != %06lx\n", state, pixel,

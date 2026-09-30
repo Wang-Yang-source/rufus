@@ -29,7 +29,7 @@ def display_registry(dpi):
 COLOR_ROLES = {
     'ActiveBorder': 'surface1', 'ActiveTitle': 'mantle', 'AppWorkSpace': 'crust',
     'Background': 'base', 'ButtonAlternateFace': 'surface0',
-    'ButtonDkShadow': 'surface0', 'ButtonFace': 'base',
+    'ButtonDkShadow': 'surface0', 'ButtonFace': 'mantle',
     'ButtonHilight': 'surface1', 'ButtonLight': 'surface0',
     'ButtonShadow': 'surface1', 'ButtonText': 'text',
     'GradientActiveTitle': 'mantle', 'GradientInactiveTitle': 'mantle',
@@ -38,7 +38,7 @@ COLOR_ROLES = {
     'InactiveTitle': 'mantle', 'InactiveTitleText': 'subtext0',
     'InfoText': 'text', 'InfoWindow': 'mantle', 'Menu': 'base',
     'MenuBar': 'base', 'MenuHilight': 'mauve', 'MenuText': 'text',
-    'Scrollbar': 'surface0', 'TitleText': 'text', 'Window': 'mantle',
+    'Scrollbar': 'surface0', 'TitleText': 'text', 'Window': 'base',
     'WindowFrame': 'surface1', 'WindowText': 'text',
 }
 
@@ -59,6 +59,7 @@ def theme_registry(flavor, font=None):
         '"ThemeActive"="0"',
         '', r'[HKEY_CURRENT_USER\Software\Akeo Consulting\Rufus]',
         '"SystemColors"=dword:00000001',
+        '"ProjectGraphUI"=dword:00000001',
     ])
     for state, role in [('Normal', 'green'), ('Paused', 'yellow'), ('Error', 'red')]:
         r, g, b = rgb(role)

@@ -53,6 +53,7 @@
 #include "cregex.h"
 #include "settings.h"
 #include "darkmode.h"
+#include "projectgraph_ui.h"
 #include "bled/bled.h"
 #include "cdio/logging.h"
 #include "../res/grub/grub_version.h"
@@ -2893,6 +2894,7 @@ static INT_PTR CALLBACK MainCallback(HWND hDlg, UINT message, WPARAM wParam, LPA
 #endif
 		SetDarkModeForChild(hDlg);
 		SubclassStatusBar(hStatus);
+		InitProjectGraphUI(hDlg);
 		SetHyperLinkFont(GetDlgItem(hDlg, IDS_CSM_HELP_TXT), (HDC)wParam, &hHyperlinkFont, FALSE);
 		// Let's not take any risk: Ask Windows to redraw the whole dialog before we exit init
 		RedrawWindow(hMainDialog, NULL, NULL, RDW_ALLCHILDREN | RDW_UPDATENOW);

@@ -95,7 +95,7 @@ am_rufus_OBJECTS = rufus-badblocks.$(OBJEXT) rufus-darkmode.$(OBJEXT) \
 	rufus-icon.$(OBJEXT) rufus-iso.$(OBJEXT) \
 	rufus-localization.$(OBJEXT) rufus-net.$(OBJEXT) \
 	rufus-parser.$(OBJEXT) rufus-pki.$(OBJEXT) \
-	rufus-process.$(OBJEXT) rufus-cregex_compile.$(OBJEXT) \
+	rufus-process.$(OBJEXT) rufus-projectgraph_ui.$(OBJEXT) rufus-cregex_compile.$(OBJEXT) \
 	rufus-cregex_parse.$(OBJEXT) rufus-cregex_vm.$(OBJEXT) \
 	rufus-rufus.$(OBJEXT) rufus-smart.$(OBJEXT) \
 	rufus-stdfn.$(OBJEXT) rufus-stdio.$(OBJEXT) \
@@ -286,7 +286,7 @@ AM_V_WINDRES_1 = $(WINDRES)
 AM_V_WINDRES_ = $(AM_V_WINDRES_$(AM_DEFAULT_VERBOSITY))
 AM_V_WINDRES = $(AM_V_WINDRES_$(V))
 rufus_SOURCES = badblocks.c darkmode.c dev.c dos.c dos_locale.c drive.c format.c format_ext.c format_fat32.c hash.c icon.c iso.c localization.c \
-	 net.c parser.c pki.c process.c cregex_compile.c cregex_parse.c cregex_vm.c rufus.c smart.c stdfn.c stdio.c stdlg.c syslinux.c ui.c vhd.c wue.c xml.c
+	 net.c parser.c pki.c process.c projectgraph_ui.c cregex_compile.c cregex_parse.c cregex_vm.c rufus.c smart.c stdfn.c stdio.c stdlg.c syslinux.c ui.c vhd.c wue.c xml.c
 
 rufus_CFLAGS = -I$(srcdir)/ms-sys/inc -I$(srcdir)/syslinux/libfat -I$(srcdir)/syslinux/libinstaller -I$(srcdir)/syslinux/win -I$(srcdir)/libcdio -I$(srcdir)/wimlib -I$(srcdir)/../res $(AM_CFLAGS) \
 	-DEXT2_FLAT_INCLUDES=0 -D_RUFUS -DSOLUTION=rufus
@@ -450,6 +450,12 @@ rufus-process.o: process.c
 
 rufus-process.obj: process.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rufus_CFLAGS) $(CFLAGS) -c -o rufus-process.obj `if test -f 'process.c'; then $(CYGPATH_W) 'process.c'; else $(CYGPATH_W) '$(srcdir)/process.c'; fi`
+
+rufus-projectgraph_ui.o: projectgraph_ui.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rufus_CFLAGS) $(CFLAGS) -c -o rufus-projectgraph_ui.o `test -f 'projectgraph_ui.c' || echo '$(srcdir)/'`projectgraph_ui.c
+
+rufus-projectgraph_ui.obj: projectgraph_ui.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rufus_CFLAGS) $(CFLAGS) -c -o rufus-projectgraph_ui.obj `if test -f 'projectgraph_ui.c'; then $(CYGPATH_W) 'projectgraph_ui.c'; else $(CYGPATH_W) '$(srcdir)/projectgraph_ui.c'; fi`
 
 rufus-cregex_compile.o: cregex_compile.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(rufus_CFLAGS) $(CFLAGS) -c -o rufus-cregex_compile.o `test -f 'cregex_compile.c' || echo '$(srcdir)/'`cregex_compile.c
@@ -746,7 +752,7 @@ uninstall-am:
 	uninstall-am
 
 
-%_rc.o: %.rc ../res/loc/embedded.loc $(wildcard $(srcdir)/../res/icons/lucide/*.png) $(srcdir)/../res/icons/lucide/resources.rcinc
+%_rc.o: %.rc ../res/loc/embedded.loc $(wildcard $(srcdir)/../res/icons/lucide/*.png) $(srcdir)/../res/icons/lucide/resources.rcinc $(wildcard $(srcdir)/../res/projectgraph-ui/*.png) $(srcdir)/../res/projectgraph-ui/resources.rcinc
 	$(AM_V_WINDRES) $(AM_RCFLAGS) -i $< -o $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

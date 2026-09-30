@@ -93,6 +93,9 @@
     <ClCompile Include="..\src\xml.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\projectgraph_ui.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\darkmode.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -210,6 +213,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\xml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\projectgraph_ui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\darkmode.h">
