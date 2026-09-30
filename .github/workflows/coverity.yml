@@ -24,6 +24,7 @@ env:
 
 jobs:
   Coverity-Build:
+    if: github.repository == 'pbatard/rufus'
     runs-on: windows-latest
 
     steps:
