@@ -20,7 +20,7 @@ rufus_SOURCES = badblocks.c darkmode.c dev.c dos.c dos_locale.c drive.c format.c
 rufus_CFLAGS = -I$(srcdir)/ms-sys/inc -I$(srcdir)/syslinux/libfat -I$(srcdir)/syslinux/libinstaller -I$(srcdir)/syslinux/win -I$(srcdir)/libcdio -I$(srcdir)/wimlib -I$(srcdir)/../res $(AM_CFLAGS) \
 	-DEXT2_FLAT_INCLUDES=0 -D_RUFUS -DSOLUTION=rufus
 rufus_LDFLAGS = $(AM_LDFLAGS) -mwindows -L../.mingw
-rufus_LDADD = rufus_rc.o bled/libbled.a ext2fs/libext2fs.a ms-sys/libmssys.a syslinux/libfat/libfat.a syslinux/libinstaller/libinstaller.a syslinux/win/libwin.a \
+rufus_LDADD = $(zig_hash_libs_$(ZIG_HASH)) rufus_rc.o bled/libbled.a ext2fs/libext2fs.a ms-sys/libmssys.a syslinux/libfat/libfat.a syslinux/libinstaller/libinstaller.a syslinux/win/libwin.a \
 	libcdio/iso9660/libiso9660.a libcdio/udf/libudf.a libcdio/driver/libdriver.a wimlib/libwim.a $(NONVULNERABLE_LIBS) $(VULNERABLE_LIBS)
 
 # Opt-in Zig backend: make ZIG_HASH=1 ZIG=/path/to/zig
@@ -31,7 +31,6 @@ ZIG_TARGET := $(if $(filter x86_64-%,$(ZIG_CC_TARGET)),x86_64-windows-gnu,$(if $
 zig_hash_cflags_1 = -DRUFUS_USE_ZIG_HASH
 zig_hash_libs_1 = zig/librufushash.a
 rufus_CFLAGS += $(zig_hash_cflags_$(ZIG_HASH))
-rufus_LDADD += $(zig_hash_libs_$(ZIG_HASH))
 rufus$(EXEEXT): $(zig_hash_libs_$(ZIG_HASH))
 
 .PHONY: zig-hash-toolchain
