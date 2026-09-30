@@ -1,5 +1,6 @@
 name: Zig hash backend
 on:
+  workflow_dispatch:
   push:
     paths: ['src/hash.c', 'src/zig/**', 'tests/*zig*', 'src/Makefile.*', 'docs/zig-toolchain.json', '.github/workflows/zig-hash.yml']
   pull_request:
@@ -12,7 +13,7 @@ jobs:
         toolchain: [stable, development]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Install verified Zig toolchain
         shell: python
         run: |
@@ -38,7 +39,7 @@ jobs:
         run: python tests/test_zig_hash.py
       - name: Install MinGW
         if: runner.os == 'Windows'
-        uses: msys2/setup-msys2@v2
+        uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2
         with:
           msystem: MINGW64
           path-type: inherit
@@ -47,5 +48,16 @@ jobs:
         if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
-          ./configure --disable-debug
+          ./configure --disable-debug --enable-test=1
           make -j4 ZIG_HASH=1
+      - name: Upload development executable
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: rufus-zig-${{ matrix.toolchain }}-x64
+          path: |
+            src/rufus.exe
+            LICENSE.txt
+            docs/zig-LICENSE.txt
+            docs/zig-toolchain.json
+          if-no-files-found: error

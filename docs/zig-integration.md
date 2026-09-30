@@ -65,3 +65,17 @@ a native C caller and cross-links C callers for all three Windows targets.
 Cross-linking does not substitute for full Rufus builds or Windows runtime
 regression testing. Existing SHA acceleration makes performance equivalence
 something to benchmark separately before making the Zig backend the default.
+
+## Development builds
+
+The `Zig hash backend` GitHub Actions workflow supports manual runs and checks
+both pinned compilers on Linux and Windows. Windows jobs build Test1 executables
+and upload `rufus-zig-development-x64` and `rufus-zig-stable-x64` artifacts,
+including license notices and the toolchain manifest.
+
+The local Linux installation uses Wine and a separate prefix. Launch it with
+`rufus-zig-dev` or the **Rufus Zig Dev** desktop entry. The executable, notices,
+build metadata and test results are under `~/.local/opt/rufus-zig-dev/`.
+Wine validation covers startup and the application's 16 built-in hash vectors;
+it does not establish that USB formatting works under Wine. Use Windows for
+physical-drive workflows, which depend on Windows storage services.
