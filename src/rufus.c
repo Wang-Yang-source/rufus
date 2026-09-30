@@ -3359,6 +3359,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	int i, opt, option_index = 0, argc = 0, si = 0, lcid = GetUserDefaultUILanguage();
 	int wait_for_mutex = 0, forced_windows_version = 0;
 	uint32_t wue_options;
+	version_t* bcdboot_version;
 	FILE* fd;
 	BOOL attached_console = FALSE, external_loc_file = FALSE, ndta_set = FALSE, automount = TRUE;
 	BOOL disable_hogger = FALSE, previous_enable_HDDs = FALSE, vc = IsRegistryNode(REGKEY_HKCU, vs_reg);
@@ -3846,7 +3847,9 @@ skip_args_processing:
 
 	// Detect if bcdboot supports the /offline /bootex options (v10.0.26100.0 or later)
 	static_sprintf(tmp_path, "%s\\bcdboot.exe", sysnative_dir);
-	bcdboot_supports_ex = (version_to_uint64(GetExecutableVersion(tmp_path)) >= 0x000A000065F40000);
+	bcdboot_version = GetExecutableVersion(tmp_path);
+	bcdboot_supports_ex = (bcdboot_version != NULL) &&
+		(version_to_uint64(bcdboot_version) >= 0x000A000065F40000);
 	uprintf("Detected bcdboot %s EX options", bcdboot_supports_ex ? "with" : "without");
 
 relaunch:
