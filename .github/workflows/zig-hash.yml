@@ -1,0 +1,48 @@
+name: Zig hash backend
+on:
+  push:
+    paths: ['src/hash.c', 'src/zig/**', 'tests/*zig*', 'src/Makefile.*', 'docs/zig-toolchain.json', '.github/workflows/zig-hash.yml']
+  pull_request:
+    paths: ['src/hash.c', 'src/zig/**', 'tests/*zig*', 'src/Makefile.*', 'docs/zig-toolchain.json', '.github/workflows/zig-hash.yml']
+jobs:
+  hash-tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install verified Zig toolchain
+        shell: python
+        run: |
+          import hashlib, json, os, pathlib, platform, tarfile, urllib.request, zipfile
+          key = 'x86_64-windows' if platform.system() == 'Windows' else 'x86_64-linux'
+          pin = json.loads(pathlib.Path('docs/zig-toolchain.json').read_text())['archives'][key]
+          dest = pathlib.Path(os.environ['RUNNER_TEMP']) / 'rufus-zig'
+          dest.mkdir()
+          archive = dest / ('zig.zip' if key.endswith('windows') else 'zig.tar.xz')
+          urllib.request.urlretrieve(pin['url'], archive)
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == pin['sha256']
+          if key.endswith('windows'):
+              with zipfile.ZipFile(archive) as handle:
+                  handle.extractall(dest)
+          else:
+              with tarfile.open(archive) as handle:
+                  handle.extractall(dest, filter='data')
+          with open(os.environ['GITHUB_PATH'], 'a') as handle:
+              handle.write(str(next(p for p in dest.iterdir() if p.is_dir())) + '\n')
+      - name: Test hashes and C ABI
+        run: python tests/test_zig_hash.py
+      - name: Install MinGW
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          path-type: inherit
+          install: mingw-w64-x86_64-toolchain base-devel autotools
+      - name: Build Rufus with Zig buffer hashes
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          ./configure --disable-debug
+          make -j4 ZIG_HASH=1

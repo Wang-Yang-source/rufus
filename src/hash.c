@@ -69,6 +69,10 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#ifdef RUFUS_USE_ZIG_HASH
+#include "zig/hash.h"
+#endif
+
 #include "db.h"
 #include "efi.h"
 #include "rufus.h"
@@ -1865,6 +1869,11 @@ out:
  */
 BOOL HashBuffer(const unsigned type, const uint8_t* buf, const size_t len, uint8_t* hash)
 {
+#ifdef RUFUS_USE_ZIG_HASH
+	_Static_assert(HASH_MD5 == 0 && HASH_SHA1 == 1 && HASH_SHA256 == 2 &&
+		HASH_SHA512 == 3 && HASH_MAX == 4, "Zig hash algorithm IDs must match");
+	return rufus_hash_buffer(type, buf, len, hash);
+#else
 	BOOL r = FALSE;
 	HASH_CONTEXT hash_ctx = { {0} };
 
@@ -1880,6 +1889,7 @@ BOOL HashBuffer(const unsigned type, const uint8_t* buf, const size_t len, uint8
 
 out:
 	return r;
+#endif
 }
 
 /*

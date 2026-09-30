@@ -66,3 +66,7 @@ embedded.loc
 /rufus_files
 stamp-h1
 /.vs/rufus
+/.zig-cache/
+/zig-out/
+/src/zig/hash-mode
+/src/zig/hash-mode.tmp

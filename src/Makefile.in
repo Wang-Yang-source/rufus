@@ -752,3 +752,40 @@ uninstall-am:
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
+
+# Opt-in Zig backend: make ZIG_HASH=1 ZIG=/path/to/zig
+ZIG_HASH ?= 0
+ZIG ?= zig
+ZIG_CC_TARGET := $(shell $(CC) -dumpmachine)
+ZIG_TARGET := $(if $(filter x86_64-%,$(ZIG_CC_TARGET)),x86_64-windows-gnu,$(if $(filter i386-% i486-% i586-% i686-%,$(ZIG_CC_TARGET)),x86-windows-gnu,$(if $(filter aarch64-%,$(ZIG_CC_TARGET)),aarch64-windows-gnu)))
+zig_hash_cflags_1 = -DRUFUS_USE_ZIG_HASH
+zig_hash_libs_1 = zig/librufushash.a
+rufus_CFLAGS += $(zig_hash_cflags_$(ZIG_HASH))
+rufus_LDADD += $(zig_hash_libs_$(ZIG_HASH))
+rufus$(EXEEXT): $(zig_hash_libs_$(ZIG_HASH))
+
+.PHONY: zig-hash-toolchain
+zig-hash-toolchain:
+	@test "$$($(ZIG) version)" = "0.16.0" || { echo "Zig 0.16.0 is required"; exit 1; }
+	@test -n "$(ZIG_TARGET)" -a -n "$(findstring mingw,$(ZIG_CC_TARGET))" || { echo "Unsupported Zig hash compiler target: $(ZIG_CC_TARGET)"; exit 1; }
+
+zig/librufushash.a: $(srcdir)/zig/hash.zig zig-hash-toolchain
+	$(AM_V_GEN)$(MKDIR_P) zig
+	$(AM_V_GEN)$(ZIG) build-lib $(srcdir)/zig/hash.zig -target $(ZIG_TARGET) -O ReleaseSafe -fcompiler-rt -femit-bin=$@
+
+# Recompile the C adapter when switching backends without requiring make clean.
+.PHONY: zig-hash-mode-check
+zig-hash-mode-check:
+
+zig/hash-mode: zig-hash-mode-check
+	@$(MKDIR_P) zig
+	@echo "$(ZIG_HASH) $(ZIG_CC_TARGET)" > zig/hash-mode.tmp
+	@cmp -s zig/hash-mode.tmp $@ || cp zig/hash-mode.tmp $@
+	@$(RM) zig/hash-mode.tmp
+
+rufus-hash.$(OBJEXT): zig/hash-mode
+
+clean-local:
+	$(RM) zig/librufushash.a zig/hash-mode zig/hash-mode.tmp
+
+EXTRA_DIST = zig/hash.zig zig/hash.h

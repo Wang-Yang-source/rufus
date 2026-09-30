@@ -41,6 +41,9 @@ Compilation
 
 Use either Visual Studio 2026 or MinGW and then invoke the `.sln` or `configure`/`make` respectively.
 
+An optional Zig buffer-hash backend is available for MinGW builds; see
+[Zig integration](docs/zig-integration.md) for the pinned toolchain, build options and tests.
+
 #### Visual Studio
 
 Rufus is an OSI compliant Open Source project. You are entitled to
