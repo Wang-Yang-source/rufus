@@ -17,7 +17,7 @@ def main():
     parser.add_argument('--help', action='help')
     parser.add_argument('--theme', choices=('mocha', 'latte'), default='mocha')
     parser.add_argument('--dpi', type=int, default=192)
-    parser.add_argument('--font', default='Noto Sans CJK SC')
+    parser.add_argument('--font', default='PingFang SC')
     args, rufus_args = parser.parse_known_args()
     if not 96 <= args.dpi <= 288:
         parser.error('--dpi must be between 96 and 288')

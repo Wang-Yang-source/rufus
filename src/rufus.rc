@@ -545,3 +545,5 @@ CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "rufus.manifest"
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 
+
+#include "../res/icons/lucide/resources.rcinc"

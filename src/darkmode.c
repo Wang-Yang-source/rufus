@@ -219,7 +219,7 @@ BOOL ChangeIconColor(HICON* hIcon, COLORREF new_color)
 		return FALSE;
 
 	if (new_color == 0)
-		new_color = use_system_colors ? GetSysColor(COLOR_HOTLIGHT) : color_accent;
+		new_color = use_system_colors ? GetSysColor(COLOR_BTNTEXT) : color_accent;
 
 	hdcBitmap = CreateCompatibleDC(NULL);
 	hdcScreen = GetDC(NULL);

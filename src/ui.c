@@ -568,8 +568,8 @@ void SetSectionHeaders(HWND hDlg, HFONT* hFont)
 	// Set the section header fonts and resize the static controls accordingly
 	if (*hFont == NULL) {
 		HDC hDC = GetDC(hMainDialog);
-		*hFont = CreateFontA(-MulDiv(14, GetDeviceCaps(hDC, LOGPIXELSY), 72), 0, 0, 0,
-			FW_SEMIBOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, 0, 0, PROOF_QUALITY, 0, "Segoe UI");
+		*hFont = CreateFontA(-MulDiv(use_system_colors ? 16 : 14, GetDeviceCaps(hDC, LOGPIXELSY), use_system_colors ? 96 : 72), 0, 0, 0,
+			use_system_colors ? FW_MEDIUM : FW_SEMIBOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, 0, 0, PROOF_QUALITY, 0, "Segoe UI");
 		safe_release_dc(hMainDialog, hDC);
 	}
 
@@ -843,7 +843,7 @@ void CreateSmallButtons(HWND hDlg)
 {
 	HIMAGELIST hSaveImageList, hHashImageList;
 	HICON hIconSave, hIconHash;
-	int icon_offset = 0, i16 = GetSystemMetrics(SM_CXSMICON);
+	int icon_offset = 0, i16 = use_system_colors ? (int)(20.0f * fScale) : GetSystemMetrics(SM_CXSMICON);
 	TBBUTTON tbToolbarButtons[1];
 	unsigned char* buffer;
 	DWORD bufsize;
@@ -852,6 +852,8 @@ void CreateSmallButtons(HWND hDlg)
 		icon_offset = 20;
 	else if (i16 >= 20)
 		icon_offset = 10;
+	if (use_system_colors)
+		icon_offset = IDI_PROJECT_GRAPH_OFFSET + ((fScale >= 1.75f) ? 20 : ((fScale >= 1.25f) ? 10 : 0));
 
 	hSaveToolbar = CreateWindowEx(0, TOOLBARCLASSNAME, NULL, TOOLBAR_STYLE,
 		0, 0, 0, 0, hMainDialog, (HMENU)IDC_SAVE_TOOLBAR, hMainInstance, NULL);
@@ -1057,7 +1059,8 @@ void CreateAdditionalControls(HWND hDlg)
 	unsigned char* buffer;
 	DWORD bufsize;
 
-	s16 = i16 = GetSystemMetrics(SM_CXSMICON);
+	s16 = GetSystemMetrics(SM_CXSMICON);
+	i16 = use_system_colors ? (int)(20.0f * fScale) : s16;
 	if (s16 >= 54)
 		s16 = 64;
 	else if (s16 >= 40)
@@ -1070,6 +1073,8 @@ void CreateAdditionalControls(HWND hDlg)
 		icon_offset = 20;
 	else if (i16 >= 20)
 		icon_offset = 10;
+	if (use_system_colors)
+		icon_offset = IDI_PROJECT_GRAPH_OFFSET + ((fScale >= 1.75f) ? 20 : ((fScale >= 1.25f) ? 10 : 0));
 
 	// Fetch the up and down expand icons for the advanced options toolbar
 	hDll = GetLibraryHandle("ComDlg32");

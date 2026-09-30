@@ -625,3 +625,8 @@
 #define _APS_NEXT_SYMED_VALUE           4000
 #endif
 #endif
+
+#define IDI_PROJECT_GRAPH_OFFSET 1000
+#define IDI_PG_MINIMIZE 1500
+#define IDI_PG_CLOSE 1510
+#define IDI_PG_CHEVRON 1520

@@ -12,7 +12,7 @@ AM_V_WINDRES_1 = $(WINDRES)
 AM_V_WINDRES_  = $(AM_V_WINDRES_$(AM_DEFAULT_VERBOSITY))
 AM_V_WINDRES   = $(AM_V_WINDRES_$(V))
 
-%_rc.o: %.rc ../res/loc/embedded.loc
+%_rc.o: %.rc ../res/loc/embedded.loc $(wildcard $(srcdir)/../res/icons/lucide/*.png) $(srcdir)/../res/icons/lucide/resources.rcinc
 	$(AM_V_WINDRES) $(AM_RCFLAGS) -i $< -o $@
 
 rufus_SOURCES = badblocks.c darkmode.c dev.c dos.c dos_locale.c drive.c format.c format_ext.c format_fat32.c hash.c icon.c iso.c localization.c \

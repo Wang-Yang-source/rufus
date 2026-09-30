@@ -746,7 +746,7 @@ uninstall-am:
 	uninstall-am
 
 
-%_rc.o: %.rc ../res/loc/embedded.loc
+%_rc.o: %.rc ../res/loc/embedded.loc $(wildcard $(srcdir)/../res/icons/lucide/*.png) $(srcdir)/../res/icons/lucide/resources.rcinc
 	$(AM_V_WINDRES) $(AM_RCFLAGS) -i $< -o $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

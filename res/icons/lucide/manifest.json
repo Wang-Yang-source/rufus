@@ -1,0 +1,206 @@
+{
+  "library": "lucide",
+  "version": "1.49.0",
+  "commit": "5a92b9ba262de5bf10e864219883267672c05db8",
+  "renderer": "ImageMagick 7 / librsvg 2.62.3, density 384",
+  "files": {
+    "lang.svg": {
+      "url": "https://raw.githubusercontent.com/lucide-icons/lucide/5a92b9ba262de5bf10e864219883267672c05db8/icons/languages.svg",
+      "sha256": "ae9048feb2c7b19855da9a8f5414f68125573039777a89b9c253cceed5dc5075"
+    },
+    "lang-16.png": {
+      "sha256": "15cbdb4aee0a868c4cbaf0419be67654849a53d201815dedd51321257cd8c102"
+    },
+    "lang-20.png": {
+      "sha256": "ace183c7056a5afbe525e4734d569e0848596564f5e460f27be838c4abb29aef"
+    },
+    "lang-24.png": {
+      "sha256": "046e708ce061ec4fc7823053f1727088568d9f4bd20ad43b5da982fab080188f"
+    },
+    "lang-30.png": {
+      "sha256": "06da04bfe6d559e86b29bfc283b665dd92e393b827e32c4a97196a186c0ac6d6"
+    },
+    "lang-32.png": {
+      "sha256": "136238aeaa3a00605d0dd66d8eabfbfce261cc0e07c1c6478a8eefc6e117b665"
+    },
+    "lang-40.png": {
+      "sha256": "95eefc7359e51b5dd64a438d1eae26a9baa56d1f32211d92848eda264d5a754c"
+    },
+    "info.svg": {
+      "url": "https://raw.githubusercontent.com/lucide-icons/lucide/5a92b9ba262de5bf10e864219883267672c05db8/icons/info.svg",
+      "sha256": "bc977a64eb96f3e9c1041ffd09a3fceb70e3e65c02b571f76064062ed31f3cb9"
+    },
+    "info-16.png": {
+      "sha256": "e1139a85e90d7b8e3960dca95ff8da66975b45e4403d176540d09259db7488f0"
+    },
+    "info-20.png": {
+      "sha256": "a5519e0ae2a3388123f57f52daa6e6c629cf5d67e02f89ebcd1476eeaf0c9157"
+    },
+    "info-24.png": {
+      "sha256": "9d5077a2e0747669e7e4dae1be0db3d20bb715d0c6da8dc801b2de2088a12079"
+    },
+    "info-30.png": {
+      "sha256": "ae968255fb1a3b45c08e64d524e0dce175a8b094d8f8ff100ee393601578d58a"
+    },
+    "info-32.png": {
+      "sha256": "5ccfd5215624e5c66a890c43d01b14bc85a563e9bf9b578b349e98503a5faaea"
+    },
+    "info-40.png": {
+      "sha256": "0fbfe0568f919e96c348639f2dc45ff78d418a30193ae1c2ab5661c1b8add2d8"
+    },
+    "settings.svg": {
+      "url": "https://raw.githubusercontent.com/lucide-icons/lucide/5a92b9ba262de5bf10e864219883267672c05db8/icons/settings.svg",
+      "sha256": "0ae27fd0f81999229e3127ac96c5b32edfea448e291d509e76212b917551d66b"
+    },
+    "settings-16.png": {
+      "sha256": "67beb64ec4d921f92ad508847d221b630b50b6ddadd4ccc7dbf6a4e1981d946d"
+    },
+    "settings-20.png": {
+      "sha256": "e230ca2d97d354bc27f2eab4d0b14996297cee2356c42deb6c697bca061dae00"
+    },
+    "settings-24.png": {
+      "sha256": "e645f73525d1c4cbde30041b0befcdb811fe488628bca3c237fe13cf89e77c63"
+    },
+    "settings-30.png": {
+      "sha256": "9a7803e39548c34ad8c82798c88a127db5359cde7aa0ad5f24014e023f48f5ff"
+    },
+    "settings-32.png": {
+      "sha256": "aa82d2dc2074f5ade79cddda65cd8a8e42e9eb58402cbb72c6048547890f6f80"
+    },
+    "settings-40.png": {
+      "sha256": "4a0e655bc3e100920d2e3c6bffdee2a0e40eea88a3faf42a593adefc19c5d32b"
+    },
+    "log.svg": {
+      "url": "https://raw.githubusercontent.com/lucide-icons/lucide/5a92b9ba262de5bf10e864219883267672c05db8/icons/file-text.svg",
+      "sha256": "52ca55846c202335fb870c8aa23e9345630ec10489303756d62e750f7109605c"
+    },
+    "log-16.png": {
+      "sha256": "82b00a76eaa3b2b591649fde1dfc034073c1922bb9e559330e6027feb31fab1a"
+    },
+    "log-20.png": {
+      "sha256": "915bd94f2227fd5f9685023e77048cc6c59462eab38ed20a1e05284fc529c253"
+    },
+    "log-24.png": {
+      "sha256": "47b468dc96d263a57c0ee9f94d8e8f0ddc320d5cca6ce299dcd90230f20158c4"
+    },
+    "log-30.png": {
+      "sha256": "93bc74280f136f37ce338df5fc62f51584eff564aabf183187ac2a7139543186"
+    },
+    "log-32.png": {
+      "sha256": "74575e701fe1ad2af50d7971807654590fb216ffc6fa0979023de75c6aea665f"
+    },
+    "log-40.png": {
+      "sha256": "aad655adc77f41bea6f43fe39a015d2fe819d21e2d2dab146115ce6721242862"
+    },
+    "save.svg": {
+      "url": "https://raw.githubusercontent.com/lucide-icons/lucide/5a92b9ba262de5bf10e864219883267672c05db8/icons/save.svg",
+      "sha256": "ee9d56a7fec4b20dd6689546d41f68219ea8cbd67f99bd17a1bdaff5be6edb53"
+    },
+    "save-16.png": {
+      "sha256": "85a9cf7f1bebc2edd08e4d465e5a8a7bcf7d21ce489e6965f617fe9bda627adc"
+    },
+    "save-20.png": {
+      "sha256": "80ed467151ca57e4a35d1cba28bfd74bb1ac4062daafdc54bff710a5018aef6d"
+    },
+    "save-24.png": {
+      "sha256": "5e47c142017aacd8d89bb4e4b16c0d63b82b551d02476e76ab0b2b7cbae91a61"
+    },
+    "save-30.png": {
+      "sha256": "66c7577684f842e3999dd8a417f4614b96b2ee6a38df860f4f7d6f58e7df3700"
+    },
+    "save-32.png": {
+      "sha256": "97d7666b04659957dba5e13f5e3c197916d9ed8c470fc8bd30dd546655fd24b7"
+    },
+    "save-40.png": {
+      "sha256": "4a72e304d1e3075ac4d69afb42d78c5f0cdc578c78ca44f124da4f0419af62fc"
+    },
+    "hash.svg": {
+      "url": "https://raw.githubusercontent.com/lucide-icons/lucide/5a92b9ba262de5bf10e864219883267672c05db8/icons/fingerprint-pattern.svg",
+      "sha256": "26a4e5756ca8fb809c7cf488a1b6b44f6921d4a34a37ca9be8facf53d362ad9b"
+    },
+    "hash-16.png": {
+      "sha256": "81993947d342051ac5c3f0c1ba8bae46df3d9e9abec32fb03e5afc0411fcf06c"
+    },
+    "hash-20.png": {
+      "sha256": "7d9d212b1be6d03d2cd5e0e20de8ad2c50eb1ec6a9bf47373d3fa8434692f78c"
+    },
+    "hash-24.png": {
+      "sha256": "bf12d3f258a269fb05ee13363e0587529e88d14f99ae24306e1f4c247555c35a"
+    },
+    "hash-30.png": {
+      "sha256": "9c848c03654359abaa8a22359d89218b2b0e604269c7f4a9f5fb312d94094a4b"
+    },
+    "hash-32.png": {
+      "sha256": "59aadf0b0176d54dd0e4ff7f4f436c07d600ffaad452812ffdcc3dc477e35a68"
+    },
+    "hash-40.png": {
+      "sha256": "1d49c69c4001beab50cb3c2a4fdcd6022874e61232cc676f5cc9865fbbd3c188"
+    },
+    "minimize.svg": {
+      "url": "https://raw.githubusercontent.com/lucide-icons/lucide/5a92b9ba262de5bf10e864219883267672c05db8/icons/minus.svg",
+      "sha256": "a0c743ab6dbf545d8a6e19ef3874f48ede686ce68d25e231bd81f540d97b1f19"
+    },
+    "minimize-16.png": {
+      "sha256": "19d4a4612d9cb9348734c12dcf1f2bf192bbb5fb27b27deacc76194124d2de68"
+    },
+    "minimize-20.png": {
+      "sha256": "71a9e4e3a03c12fc53fc0401f35022aaf4164da2abb328410d2b10f8d070b7c9"
+    },
+    "minimize-24.png": {
+      "sha256": "59cf592b0783463c9e9d4a6fa8dbc520c6ac7eb43d4d752e5469a7b165da29eb"
+    },
+    "minimize-30.png": {
+      "sha256": "71f9a97780bf8108cd278bbfdc23071cd07dd33db6f64a53226f5215ebdac7d9"
+    },
+    "minimize-32.png": {
+      "sha256": "2b7c8e7fa8c521cea50c952416b347323ad55feb6707fea60e94639e26e01e0d"
+    },
+    "minimize-40.png": {
+      "sha256": "bb35b8fec7dbd9da2409c0ae002d60f2ef4954ba7c9e3fb234c02ed24958d7e3"
+    },
+    "close.svg": {
+      "url": "https://raw.githubusercontent.com/lucide-icons/lucide/5a92b9ba262de5bf10e864219883267672c05db8/icons/x.svg",
+      "sha256": "4a9cdab38fbb96162e7dace28e33f4ca0e49d8963a6162abc3d4691b7d675117"
+    },
+    "close-16.png": {
+      "sha256": "fcbac25395d5bef6fd05c452719a86414911ba45c4a9e5285f3496ee1791497c"
+    },
+    "close-20.png": {
+      "sha256": "9cc563cfe05c0681060d8aed2dba5f6d0786f327e6dde65338611c0b8cb96011"
+    },
+    "close-24.png": {
+      "sha256": "1e38e89aebb0e15f1f9765d2bad07adda02190b1fdff969ce4895d92571431e0"
+    },
+    "close-30.png": {
+      "sha256": "1dc6a8ec88fe73127039f52fd449c6309b4aa790cd2b01da0d0accb0391a6e88"
+    },
+    "close-32.png": {
+      "sha256": "42d27c4407cc15e56da98b48524526252046912b4230dd582539553ba46f7ef6"
+    },
+    "close-40.png": {
+      "sha256": "6112e978d0bda8ed96d495705f884d8aef0607e56c01a80294bae34831f28e34"
+    },
+    "chevron.svg": {
+      "url": "https://raw.githubusercontent.com/lucide-icons/lucide/5a92b9ba262de5bf10e864219883267672c05db8/icons/chevron-down.svg",
+      "sha256": "66ea878e72ed3488bb3b464c39dfdccee8d1f78e560dccea40e5e12da0e87e87"
+    },
+    "chevron-16.png": {
+      "sha256": "daa60af2d0935e9621bbb7e5872de6d236a5dbaa004354d24531512934693a02"
+    },
+    "chevron-20.png": {
+      "sha256": "4cd5573b9a6f24431debe95da82cd10a77b7606be73c538531978c62666b4b70"
+    },
+    "chevron-24.png": {
+      "sha256": "0c26fdf753e621a1d15c976d2e62230377ad605569ce099fefc5a5d037aa2a80"
+    },
+    "chevron-30.png": {
+      "sha256": "cb41e8adc671a8ecc1b2e6195e06803a73764699149ac84cd132dc760c4e4a24"
+    },
+    "chevron-32.png": {
+      "sha256": "574b9ee1962a2b4d064fbccbbab35063e3f361d919898d9c082091288467ac88"
+    },
+    "chevron-40.png": {
+      "sha256": "314d79da00bf02e39bbc1cb3b0574bd8bf57e375a77bb0c1f9305af1cd3b7b82"
+    }
+  }
+}

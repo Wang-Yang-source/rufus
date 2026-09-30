@@ -20,6 +20,7 @@ def main():
     parser.add_argument('--prefix', type=Path, required=True, help='Disposable test prefix only')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--cc', default='x86_64-w64-mingw32-gcc')
+    parser.add_argument('--font', default='Noto Sans CJK SC')
     parser.add_argument('--dpi', type=int, nargs='+', default=[96, 144, 192])
     parser.add_argument('--themes', nargs='+', choices=['mocha', 'latte'], default=['mocha', 'latte'])
     args = parser.parse_args()
@@ -38,7 +39,7 @@ def main():
             if not 96 <= dpi <= 288:
                 parser.error('DPI must be between 96 and 288')
             for theme in args.themes:
-                configuration.configure(prefix, dpi, theme, 'Noto Sans CJK SC')
+                configuration.configure(prefix, dpi, theme, args.font)
                 output = (args.output / f'{theme}-{dpi}').resolve()
                 output.mkdir(exist_ok=True)
                 logs = list((prefix / 'drive_c/users').glob('*/AppData/Local/Rufus/rufus.log'))

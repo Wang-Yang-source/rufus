@@ -39,8 +39,10 @@ the launcher holds a lock while it runs and will not terminate another instance.
 It preserves an existing executable as `rufus-before-ui.exe`. Theme changes retain
 Rufus's device and application settings. The first launch or a theme change takes
 a few seconds while Wine reloads the prefix. DPI can also be overridden on the
-command line. The default font is `Noto Sans CJK SC`; install that font or supply
-`--font` with an installed family that supports Chinese.
+command line. The personal launcher uses the separately installed `PingFang SC` font, matching
+ProjectGraph. It is not bundled. On another computer supply `--font` with an
+installed family that supports Chinese (for example `Noto Sans CJK SC`).
+See [the design and asset provenance](projectgraph-ui.md).
 
 The palette data is derived from [Catppuccin palette v1.8.0](https://github.com/catppuccin/palette/tree/07d02aa110ef9eb7e7427afca5c73ba9cf7f8ebd)
 under the MIT license, included in `contrib/wine/Catppuccin-LICENSE`. The source
