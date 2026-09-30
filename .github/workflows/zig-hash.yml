@@ -48,6 +48,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
+          ./bootstrap.sh
           ./configure --disable-debug --enable-test=1
           make -j4 ZIG_HASH=1
       - name: Upload development executable

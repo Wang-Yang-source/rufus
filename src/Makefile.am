@@ -31,7 +31,7 @@ ZIG_TARGET := $(if $(filter x86_64-%,$(ZIG_CC_TARGET)),x86_64-windows-gnu,$(if $
 zig_hash_cflags_1 = -DRUFUS_USE_ZIG_HASH
 zig_hash_libs_1 = zig/librufushash.a
 rufus_CFLAGS += $(zig_hash_cflags_$(ZIG_HASH))
-rufus$(EXEEXT): $(zig_hash_libs_$(ZIG_HASH))
+EXTRA_rufus_DEPENDENCIES = $(zig_hash_libs_$(ZIG_HASH))
 
 .PHONY: zig-hash-toolchain
 zig-hash-toolchain:
