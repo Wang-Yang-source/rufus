@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Check the exported C ABI against Python's independent hashlib backend."""
+import argparse
 import ctypes
 import hashlib
 import json
@@ -14,7 +15,43 @@ ROOT = Path(__file__).resolve().parents[1]
 ZIG = os.environ.get('ZIG', 'zig')
 
 
+def check_library(library):
+    module = ctypes.CDLL(str(library))
+    hash_buffer = module.rufus_hash_buffer
+    hash_buffer.argtypes = [ctypes.c_uint, ctypes.c_void_p, ctypes.c_size_t, ctypes.c_void_p]
+    hash_buffer.restype = ctypes.c_int
+    cases = 0
+    for kind, algorithm in enumerate(('md5', 'sha1', 'sha256', 'sha512')):
+        for length in (0, 1, 3, 55, 56, 63, 64, 65, 111, 112, 127, 128, 129, 4096, 65537):
+            data = bytes((i * 37 + 11) % 256 for i in range(length))
+            expected = hashlib.new(algorithm, data).digest()
+            source = ctypes.create_string_buffer(data)
+            dest = (ctypes.c_ubyte * 80)(*([0xA5] * 80))
+            assert hash_buffer(kind, source, length, ctypes.byref(dest, 1)) == 1
+            assert bytes(dest)[1:1 + len(expected)] == expected
+            assert dest[0] == 0xA5
+            assert bytes(dest)[1 + len(expected):] == bytes([0xA5]) * (79 - len(expected))
+            cases += 1
+        dest = (ctypes.c_ubyte * 64)()
+        assert hash_buffer(kind, None, 0, dest) == 1
+        assert bytes(dest)[:len(expected)] == hashlib.new(algorithm).digest()
+    for kind, source, length, output in ((4, b'abc', 3, True),
+                                          (0xFFFFFFFF, b'abc', 3, True),
+                                          (0, None, 1, True),
+                                          (0, b'abc', 3, False)):
+        dest = (ctypes.c_ubyte * 64)(*([0xA5] * 64))
+        assert hash_buffer(kind, source, length, dest if output else None) == 0
+        assert bytes(dest) == bytes([0xA5]) * 64
+    print(f'Passed {cases} digest comparisons and NULL/error/guard checks')
+
+
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--check-library', type=Path, help=argparse.SUPPRESS)
+    args = parser.parse_args()
+    if args.check_library is not None:
+        check_library(args.check_library)
+        return
     version = subprocess.check_output([ZIG, 'version'], text=True).strip()
     pins = json.loads((ROOT / 'docs/zig-toolchain.json').read_text())
     versions = {pins['version'], pins['development']['version']}
@@ -26,32 +63,10 @@ def main():
         subprocess.run([ZIG, 'build-lib', str(ROOT / 'src/zig/hash.zig'),
                         '-dynamic', '-O', 'ReleaseSafe', '-fcompiler-rt',
                         f'-femit-bin={library}'], check=True, cwd=directory)
-        module = ctypes.CDLL(str(library))
-        hash_buffer = module.rufus_hash_buffer
-        hash_buffer.argtypes = [ctypes.c_uint, ctypes.c_void_p, ctypes.c_size_t, ctypes.c_void_p]
-        hash_buffer.restype = ctypes.c_int
-        cases = 0
-        for kind, algorithm in enumerate(('md5', 'sha1', 'sha256', 'sha512')):
-            for length in (0, 1, 3, 55, 56, 63, 64, 65, 111, 112, 127, 128, 129, 4096, 65537):
-                data = bytes((i * 37 + 11) % 256 for i in range(length))
-                expected = hashlib.new(algorithm, data).digest()
-                source = ctypes.create_string_buffer(data)
-                dest = (ctypes.c_ubyte * 80)(*([0xA5] * 80))
-                assert hash_buffer(kind, source, length, ctypes.byref(dest, 1)) == 1
-                assert bytes(dest)[1:1 + len(expected)] == expected
-                assert dest[0] == 0xA5
-                assert bytes(dest)[1 + len(expected):] == bytes([0xA5]) * (79 - len(expected))
-                cases += 1
-            dest = (ctypes.c_ubyte * 64)()
-            assert hash_buffer(kind, None, 0, dest) == 1
-            assert bytes(dest)[:len(expected)] == hashlib.new(algorithm).digest()
-        for kind, source, length, output in ((4, b'abc', 3, True),
-                                              (0xFFFFFFFF, b'abc', 3, True),
-                                              (0, None, 1, True),
-                                              (0, b'abc', 3, False)):
-            dest = (ctypes.c_ubyte * 64)(*([0xA5] * 64))
-            assert hash_buffer(kind, source, length, dest if output else None) == 0
-            assert bytes(dest) == bytes([0xA5]) * 64
+        # A loaded DLL cannot be deleted on Windows. Run the ctypes checks in
+        # a child so the OS releases the library before TemporaryDirectory cleanup.
+        subprocess.run([sys.executable, str(Path(__file__).resolve()),
+                        '--check-library', str(library)], check=True, cwd=directory)
         native_archive = Path(directory) / 'native.a'
         subprocess.run([ZIG, 'build-lib', str(ROOT / 'src/zig/hash.zig'),
                         '-O', 'ReleaseSafe', '-fcompiler-rt', f'-femit-bin={native_archive}'],
@@ -70,7 +85,7 @@ def main():
                             str(ROOT / 'tests/zig_hash_abi.c'), str(archive),
                             '-o', str(Path(directory) / (target + '.exe'))],
                            check=True, cwd=directory)
-        print(f'Passed {cases} digest comparisons, NULL/error/guard checks, and 3 Windows C links')
+    print('Native C ABI and 3 Windows C links passed; temporary files cleaned')
 
 
 if __name__ == '__main__':
